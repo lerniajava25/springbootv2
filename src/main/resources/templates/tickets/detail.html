@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${ticket.title}">Ticket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">
+        <span class="brand-mark">HD</span> Helpdesk
+    </a>
+    <nav>
+        <a th:href="@{/tickets}">Back</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="link-button" type="submit">Log out</button>
+        </form>
+    </nav>
+</header>
+<main class="page">
+    <div class="page-head">
+        <div><h1 th:text="${ticket.title}"></h1><p th:text="'Ticket number: ' + ${ticket.id}"></p></div>
+    </div>
+    <div class="detail-grid">
+        <section class="detail-main">
+            <h2>Description</h2>
+            <p th:text="${ticket.description}" class="description"></p>
+        </section>
+        <aside class="detail-side">
+            <div class="detail-row">
+                <span>Status</span>
+                <strong class="status"
+                        th:text="${ticket.status.name() == 'NEW'} ? 'New'
+                        : (${ticket.status.name() == 'IN_PROGRESS'} ? 'In progress'
+                        : (${ticket.status.name() == 'WAITING_FOR_USER'} ? 'Waiting for user'
+                        : (${ticket.status.name() == 'RESOLVED'} ? 'Resolved'
+                        : (${ticket.status.name() == 'CLOSED'} ? 'Closed' : ticket.status))))"></strong>
+            </div>
+            <div class="detail-row"><span>Reported by</span><strong th:text="${ticket.owner.username}"></strong></div>
+            <div class="detail-row"><span>Assignee</span><strong th:text="${ticket.assignee != null ? ticket.assignee.username : 'Unassigned'}"></strong></div>
+        </aside>
+    </div>
+
+    <section th:if="${staff}" class="comments">
+        <h2>Manage ticket</h2>
+        <form th:action="@{/agent/tickets/{id}/assign(id=${ticket.id})}" method="post" class="inline-form">
+            <button type="submit">Assign to me</button>
+        </form>
+        <form th:action="@{/agent/tickets/{id}/status(id=${ticket.id})}" method="post" class="inline-form">
+            <label>
+                Status
+                <select name="status">
+                    <option th:each="status : ${statuses}"
+                            th:value="${status}"
+                            th:text="${status.name() == 'NEW'} ? 'New'
+                            : (${status.name() == 'IN_PROGRESS'} ? 'In progress'
+                            : (${status.name() == 'WAITING_FOR_USER'} ? 'Waiting for user'
+                            : (${status.name() == 'RESOLVED'} ? 'Resolved'
+                            : (${status.name() == 'CLOSED'} ? 'Closed' : status))))"
+                            th:selected="${status == ticket.status}">
+                    </option>
+                </select>
+            </label>
+            <button type="submit">Change status</button>
+        </form>
+    </section>
+
+    <section class="comments">
+        <h2>Comments</h2>
+        <p th:if="${ticket.comments.isEmpty()}">No comments yet.</p>
+        <article th:each="comment : ${ticket.comments}" class="comment">
+            <strong th:text="${comment.author.username}"></strong>
+            <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+            <p th:text="${comment.text}"></p>
+        </article>
+
+        <form th:action="@{/tickets/{id}/comments(id=${ticket.id})}" method="post"
+              th:onsubmit="${!staff and (ticket.status.name() == 'RESOLVED' or ticket.status.name() == 'CLOSED')}
+                  ? 'return confirm(&quot;This ticket is resolved or closed. Do you want to reopen it and add a comment?&quot;)'
+                  : null">
+            <label>Add comment
+                <textarea name="text" required maxlength="4000"></textarea>
+            </label>
+            <input th:if="${!staff and (ticket.status.name() == 'RESOLVED' or ticket.status.name() == 'CLOSED')}"
+                   type="hidden" name="reopen" value="true">
+            <button type="submit">Add comment</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

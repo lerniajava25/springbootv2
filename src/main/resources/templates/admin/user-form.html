@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create user</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">
+        <span class="brand-mark">HD</span> Helpdesk
+    </a>
+    <nav><a th:href="@{/admin/users}">Back</a></nav>
+</header>
+<main class="page">
+    <div class="page-head"><div><h1>Create user</h1><p>Add an account to the system.</p></div></div>
+    <section class="form-panel">
+    <form th:action="@{/admin/users}" method="post" class="form-grid">
+        <label>Username
+            <input type="text" name="username" required>
+        </label>
+        <label>Password
+            <input type="password" name="password" required>
+        </label>
+        <label>Role
+            <select name="role">
+                <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+            </select>
+        </label>
+        <button type="submit">Create</button>
+    </form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">
+        <span class="brand-mark">HD</span>
+        Helpdesk
+    </a>
+    <nav>
+        <a th:href="@{/tickets/new}">New ticket</a>
+        <a th:if="${staff}" th:href="@{/tickets}">All tickets</a>
+        <a th:href="@{/admin/users}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Users</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="link-button" type="submit">Log out</button>
+        </form>
+    </nav>
+</header>
+<main class="page">
+    <div class="page-head">
+        <div>
+            <h1 th:text="${staff} ? 'All tickets' : 'My tickets'">Tickets</h1>
+            <p th:text="${staff} ? 'All incoming support tickets.' : 'Your support tickets.'"></p>
+        </div>
+        <a th:href="@{/tickets/new}" class="button">Create ticket</a>
+    </div>
+
+    <div class="summary">
+        <article class="summary-card">
+            <span>Total</span>
+            <strong th:text="${tickets.size()}">0</strong>
+        </article>
+        <article class="summary-card">
+            <span>In progress</span>
+            <strong th:text="${tickets.?[status.name() == 'IN_PROGRESS'].size()}">0</strong>
+        </article>
+        <article class="summary-card">
+            <span>Resolved</span>
+            <strong th:text="${tickets.?[status.name() == 'RESOLVED'].size()}">0</strong>
+        </article>
+    </div>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2 th:text="${staff} ? 'Latest tickets' : 'Your tickets'"></h2>
+        </div>
+    <p class="empty-state" th:if="${tickets.isEmpty()}">No tickets found.</p>
+    <div class="table-wrap" th:if="${!tickets.isEmpty()}">
+    <table>
+        <thead><tr><th>Ticket</th><th>Status</th><th th:if="${staff}">Created by</th><th>Created</th></tr></thead>
+        <tbody>
+        <tr th:each="ticket : ${tickets}">
+            <td><a th:href="@{/tickets/{id}(id=${ticket.id})}" th:text="${ticket.title}"></a></td>
+            <td>
+                <span class="status"
+                      th:text="${ticket.status.name() == 'NEW'} ? 'New'
+                      : (${ticket.status.name() == 'IN_PROGRESS'} ? 'In progress'
+                      : (${ticket.status.name() == 'WAITING_FOR_USER'} ? 'Waiting for user'
+                      : (${ticket.status.name() == 'RESOLVED'} ? 'Resolved'
+                      : (${ticket.status.name() == 'CLOSED'} ? 'Closed' : ticket.status))))"></span>
+            </td>
+            <td th:if="${staff}" th:text="${ticket.owner.username}"></td>
+            <td th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    </section>
+</main>
+</body>
+</html>

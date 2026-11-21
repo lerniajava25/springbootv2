@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New ticket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">
+        <span class="brand-mark">HD</span> Helpdesk
+    </a>
+    <nav><a th:href="@{/tickets}">Tickets</a></nav>
+</header>
+<main class="page">
+    <div class="page-head">
+        <div><h1>Create ticket</h1><p>Describe the issue as clearly as possible.</p></div>
+    </div>
+    <section class="form-panel">
+        <form th:action="@{/tickets}" method="post" class="form-grid">
+            <label>Subject
+                <input type="text" name="title" required maxlength="150">
+            </label>
+            <label>Description
+                <textarea name="description" required maxlength="4000"></textarea>
+            </label>
+            <div class="actions">
+                <button type="submit">Submit ticket</button>
+                <a th:href="@{/tickets}" class="button secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

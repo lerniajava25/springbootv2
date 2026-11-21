@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" th:href="@{/tickets}">
+        <span class="brand-mark">HD</span> Helpdesk
+    </a>
+    <nav><a th:href="@{/tickets}">Tickets</a></nav>
+</header>
+<main class="page">
+    <div class="page-head">
+        <div><h1>Users</h1><p>Manage accounts, roles, and permissions.</p></div>
+        <a th:href="@{/admin/users/new}" class="button">New user</a>
+    </div>
+    <section class="panel">
+    <table>
+        <thead><tr><th>Username</th><th>Role</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.role}"></td>
+            <td th:text="${user.enabled ? 'Yes' : 'No'}"></td>
+            <td>
+                <form th:action="@{/admin/users/{id}(id=${user.id})}" method="post" class="inline-form">
+                    <select name="role">
+                        <option th:each="role : ${T(org.example.helpdesk.entity.Role).values()}"
+                                th:value="${role}" th:text="${role}"
+                                th:selected="${role == user.role}">
+                        </option>
+                    </select>
+                    <label><input type="checkbox" name="enabled" value="true" th:checked="${user.enabled}"> Active</label>
+                    <button type="submit">Save</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </section>
+</main>
+</body>
+</html>
