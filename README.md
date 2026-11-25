@@ -2,43 +2,11 @@
 
 A simple Spring Boot application for managing support tickets.
 
-## Requirements
+## Start
 
-- Java 17
-- A local MySQL server
-
-## Running the project
-
-### 1. Start MySQL
-
-Start MySQL and make sure it is listening on port `3306`.
-
-Create the application database and user if they do not already exist:
-
-```sql
-CREATE DATABASE IF NOT EXISTS helpdesk;
-CREATE USER IF NOT EXISTS 'helpdesk'@'localhost' IDENTIFIED BY 'admin';
-GRANT ALL PRIVILEGES ON helpdesk.* TO 'helpdesk'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-### 2. Start the application
-
-Windows:
-
-```bat
-mvnw.cmd spring-boot:run
-```
-
-Linux/macOS:
-
-```bash
-./mvnw spring-boot:run
-```
-
-### 3. Open the application
-
-<http://localhost:8080>
+1. Start Docker Desktop and run `docker compose up -d db` in the project folder.
+2. Run `.\mvnw.cmd spring-boot:run` in PowerShell.
+3. Open <http://localhost:8080>.
 
 ## Features
 
@@ -65,7 +33,7 @@ Sign in at <http://localhost:8080/login>.
 
 ## Database
 
-The application uses MySQL by default. The local development connection is:
+The application uses MySQL by default. The Docker and local development connection is:
 
 | Setting | Default |
 |---|---|
